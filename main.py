@@ -105,8 +105,16 @@ def update_pulldown_options():
             label='wav', command=lambda: pulldown_option.set('wav'))
 
 
+def update_ytdlp():
+    '''yt-dlpの更新'''
+    subprocess.run("yt-dlp --rm-cache-dir", shell=True)
+    subprocess.run("yt-dlp -U --no-check-certificate", shell=True)
+
+
 def main():
     global url_entry, output_dir_entry, radio_option, pulldown_option, pulldown_menu
+
+    update_ytdlp()
 
     # メインウィンドウの作成
     window = tk.Tk()
