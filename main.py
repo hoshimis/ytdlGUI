@@ -16,13 +16,7 @@ def on_clicked_start_dl_button():
     output_dir = output_dir_entry.get()
     output_path = output_dir + output_file_name
 
-    # ラジオボタンの値によってオプションを変更
-    selected_radio_option = radio_option.get()
-    if selected_radio_option == '0':
-        f_string = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
-    else:
-        f_string = "bestaudio[ext=m4a]/best[ext=m4a]/best"
-
+    # DLコマンドの生成
     command = [
         "yt-dlp",
         video_url,
@@ -30,13 +24,34 @@ def on_clicked_start_dl_button():
         "--socket-timeout",
         "30",
         "--ignore-errors",
-        "-f",
-        f_string,
         "--output",
         output_path,
         "--retries",
         "3"
     ]
+
+    # プルダウンリストの値によってオプションを変更
+    selected_pulldown_list_option = pulldown_option.get()
+    if selected_pulldown_list_option == 'オプションなし':
+        ext = "m4a"
+    else:
+        ext = selected_pulldown_list_option
+
+    # ラジオボタンの値によってオプションを変更
+    selected_radio_option = radio_option.get()
+    if selected_radio_option == '0':
+        command.append("-f")
+        command.append(
+            "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best")
+    else:
+        command.append("-f")
+        command.append(
+            "bestaudio[ext=m4a]/bestaudio/best")
+        # 音声のみを抽出
+        command.append("--extract-audio")
+        command.append("--audio-format")
+        command.append(ext)
+
     subprocess.run(command, shell=True)
 
     messagebox.showinfo("ダウンロード完了", "ダウンロードが完了しました！")
@@ -78,18 +93,16 @@ def update_pulldown_options():
     if selected_radio_option == '0':
         pulldown_menu['menu'].add_command(
             label='オプションなし', command=lambda: pulldown_option.set('オプションなし'))
-        pulldown_menu['menu'].add_command(
-            label='mp4', command=lambda: pulldown_option.set('mp4'))
-        pulldown_menu['menu'].add_command(
-            label='mp4', command=lambda: pulldown_option.set('mp4'))
     # audio
     else:
         pulldown_menu['menu'].add_command(
             label='オプションなし', command=lambda: pulldown_option.set('オプションなし'))
         pulldown_menu['menu'].add_command(
-            label='mp4', command=lambda: pulldown_option.set('mp4'))
+            label='m4a', command=lambda: pulldown_option.set('m4a'))
         pulldown_menu['menu'].add_command(
-            label='mp4', command=lambda: pulldown_option.set('mp4'))
+            label='mp3', command=lambda: pulldown_option.set('mp3'))
+        pulldown_menu['menu'].add_command(
+            label='wav', command=lambda: pulldown_option.set('wav'))
 
 
 def main():
@@ -137,7 +150,7 @@ def main():
 
     # DLボタン
     start_dl_button = tk.Button(
-        window, text="動画をインストールする", command=on_clicked_start_dl_button)
+        window, text="ダウンロード", command=on_clicked_start_dl_button)
     start_dl_button.pack(pady=20)
 
     # イベントループの開始
