@@ -52,9 +52,13 @@ def on_clicked_start_dl_button():
         command.append("--audio-format")
         command.append(ext)
 
-    subprocess.run(command, shell=True)
-
-    messagebox.showinfo("ダウンロード完了", "ダウンロードが完了しました！")
+    # エラーハンドリング
+    try:
+        subprocess.run(command)
+    except Exception as e:
+        messagebox.showerror("エラー", "ダウンロードに失敗しました！")
+    else:
+        messagebox.showinfo("ダウンロード完了", "ダウンロードが完了しました！")
 
 
 def on_clicked_browse_button():
@@ -107,8 +111,8 @@ def update_pulldown_options():
 
 def update_ytdlp():
     '''yt-dlpの更新'''
-    subprocess.run("yt-dlp --rm-cache-dir", shell=True)
-    subprocess.run("yt-dlp -U --no-check-certificate", shell=True)
+    subprocess.run("yt-dlp --rm-cache-dir")
+    subprocess.run("yt-dlp -U --no-check-certificate")
 
 
 def main():
